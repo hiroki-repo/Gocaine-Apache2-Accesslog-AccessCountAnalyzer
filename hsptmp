@@ -1,0 +1,22 @@
+#runtime "hsp3cl"
+#packopt name "analyzer"
+notesel accesslogs
+noteload "access.log"
+lf="":wpoke lf,0,0xa
+accesslogsn="":ipaddrx=0:ipaddr="":ipaddrs=""
+mes "Access count analyzing tool for Apache2 access logs"
+repeat strlen(accesslogs)
+accesslogslfpos=instr(accesslogs,cnt,lf)
+if accesslogslfpos=-1{break}
+//accesslogsn+=strmid(accesslogs,cnt,cnt+accesslogslfpos)+"\n"
+accesslogsn=strmid(accesslogs,cnt,cnt+accesslogslfpos)
+split accesslogsn," ",ipaddr
+ipaddrnum=-1:repeat ipaddrx:if ipaddrs(cnt) = ipaddr{ipaddrnum=cnt:break}:loop:if ipaddrnum=-1{ipaddrs(ipaddrx)=ipaddr:ipaddrx++}
+await
+continue cnt+accesslogslfpos+1
+loop
+mes "Access count:"+ipaddrx
+repeat ipaddrx
+mes "("+str(ipaddrx)+"/"+str(cnt+1)+"):"+ipaddrs(cnt)
+loop
+end
